@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OEIF 2026 Expanded National & SADC Sponsorship Directory</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen">
+
+    <!-- Header -->
+    <header class="bg-slate-900 text-white shadow-md">
+        <div class="max-w-7xl mx-auto px-4 py-6 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div>
+                <span class="bg-amber-500 text-slate-950 text-xs font-bold uppercase tracking-wider px-2.5 py-1 rounded-full">OEIF 2026 Master Directory (65 Entities)</span>
+                <h1 class="text-2xl md:text-3xl font-extrabold mt-2">National & SADC Sponsorship & Partnership Tracker</h1>
+                <p class="text-slate-400 text-sm mt-1">Royal Mane Investment CC • Ongwediva Trade Fair Centre (17 October 2026)</p>
+            </div>
+            <div class="flex items-center gap-3">
+                <button onclick="exportToCSV()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2 cursor-pointer shadow-sm">
+                    <i class="fa-solid fa-file-excel"></i> Export CSV
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-7xl mx-auto px-4 py-8">
+
+        <!-- Stats Overview -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
+            <div class="bg-white p-4 rounded-xl shadow-xs border border-slate-200">
+                <div class="text-slate-500 text-xs font-semibold uppercase">Total Prospects</div>
+                <div id="statTotal" class="text-2xl font-bold text-slate-900 mt-1">0</div>
+            </div>
+            <div class="bg-white p-4 rounded-xl shadow-xs border border-slate-200">
+                <div class="text-slate-500 text-xs font-semibold uppercase">Banks & DFIs</div>
+                <div id="statFinancial" class="text-2xl font-bold text-blue-600 mt-1">0</div>
+            </div>
+            <div class="bg-white p-4 rounded-xl shadow-xs border border-slate-200">
+                <div class="text-slate-500 text-xs font-semibold uppercase">Mining & Energy</div>
+                <div id="statMining" class="text-2xl font-bold text-amber-600 mt-1">0</div>
+            </div>
+            <div class="bg-white p-4 rounded-xl shadow-xs border border-slate-200">
+                <div class="text-slate-500 text-xs font-semibold uppercase">Tech & Telecom</div>
+                <div id="statTech" class="text-2xl font-bold text-purple-600 mt-1">0</div>
+            </div>
+            <div class="bg-white p-4 rounded-xl shadow-xs border border-slate-200">
+                <div class="text-slate-500 text-xs font-semibold uppercase">SADC / Regional</div>
+                <div id="statSADC" class="text-2xl font-bold text-emerald-600 mt-1">0</div>
+            </div>
+        </div>
+
+        <!-- Controls: Search & Filters -->
+        <div class="bg-white p-4 rounded-xl shadow-xs border border-slate-200 mb-6 flex flex-col lg:flex-row justify-between items-center gap-4">
+            <div class="relative w-full lg:w-80">
+                <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
+                    <i class="fa-solid fa-search"></i>
+                </span>
+                <input type="text" id="searchInput" oninput="filterTable()" placeholder="Search company, email, country..." class="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
+            </div>
+            
+            <div class="flex flex-wrap gap-2 w-full lg:w-auto items-center">
+                <span class="text-xs font-bold text-slate-500 uppercase mr-1">Category:</span>
+                <button onclick="filterCategory('All')" class="cat-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-900 text-white transition cursor-pointer">All</button>
+                <button onclick="filterCategory('Banking & Finance')" class="cat-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200 transition cursor-pointer">Banking</button>
+                <button onclick="filterCategory('Mining & Industrial')" class="cat-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200 transition cursor-pointer">Mining</button>
+                <button onclick="filterCategory('Tech & Telecom')" class="cat-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200 transition cursor-pointer">Tech/Telecom</button>
+                <button onclick="filterCategory('Energy & Retail')" class="cat-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200 transition cursor-pointer">Energy/Retail</button>
+                <button onclick="filterCategory('Regulatory & Government')" class="cat-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200 transition cursor-pointer">Regulatory</button>
+                <button onclick="filterCategory('Media')" class="cat-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200 transition cursor-pointer">Media</button>
+            </div>
+        </div>
+
+        <!-- Secondary Scope Filter -->
+        <div class="bg-slate-100 px-4 py-2 rounded-lg mb-6 flex items-center gap-3 text-xs font-medium text-slate-600">
+            <span>Scope Filter:</span>
+            <button onclick="filterScope('All')" id="scopeAll" class="scope-btn font-bold text-slate-900 underline cursor-pointer">All Scopes</button> | 
+            <button onclick="filterScope('Namibia')" id="scopeNam" class="scope-btn hover:text-slate-900 cursor-pointer">Namibia National</button> | 
+            <button onclick="filterScope('SADC')" id="scopeSadc" class="scope-btn hover:text-slate-900 cursor-pointer">SADC Regional / International</button>
+        </div>
+
+        <!-- Spreadsheet Table Card -->
+        <div class="bg-white rounded-xl shadow-xs border border-slate-200 overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse" id="prospectTable">
+                    <thead>
+                        <tr class="bg-slate-100 text-slate-600 text-xs uppercase tracking-wider border-b border-slate-200">
+                            <th class="py-3 px-4 font-semibold">Company / Organization</th>
+                            <th class="py-3 px-4 font-semibold">Category</th>
+                            <th class="py-3 px-4 font-semibold">Scope / Base</th>
+                            <th class="py-3 px-4 font-semibold">Contact Details</th>
+                            <th class="py-3 px-4 font-semibold">Target Opportunity</th>
+                            <th class="py-3 px-4 font-semibold">Status</th>
+                            <th class="py-3 px-4 font-semibold text-center">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-200 text-sm" id="tableBody">
+                        <!-- Populated dynamically via JS -->
+                    </tbody>
+                </table>
+            </div>
+            <div id="noResults" class="hidden p-8 text-center text-slate-500">
+                No matching organizations found.
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Modal for viewing/editing -->
+    <div id="detailModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs hidden justify-center items-center p-4 z-50">
+        <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-xl border border-slate-200">
+            <div class="flex justify-between items-start mb-4">
+                <h3 id="modalTitle" class="text-lg font-bold text-slate-900">Company Details</h3>
+                <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600 text-xl font-bold cursor-pointer">&times;</button>
+            </div>
+            <div id="modalContent" class="space-y-3 text-sm text-slate-600 mb-6">
+                <!-- Content injected here -->
+            </div>
+            <div class="flex justify-end gap-2">
+                <button onclick="closeModal()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 px-4 py-2 rounded-lg text-sm font-medium transition cursor-pointer">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script Data & Logic (65 Companies) -->
+    <script>
+        const prospects = [
+            // --- BANKING & FINANCE (1-15) ---
+            { name: "First National Bank (FNB Namibia)", category: "Banking & Finance", scope: "Namibia", phone: "+264 61 299 2111", email: "info@fnbnamibia.com.na", address: "Windhoek, Namibia", opportunity: "Gold Partner / Financier Panel", status: "Contacted" },
+            { name: "Standard Bank Namibia", category: "Banking & Finance", scope: "Namibia", phone: "+264 61 294 9111", email: "info@standardbank.com.na", address: "Windhoek, Namibia", opportunity: "Gold Partner / SME Solutions", status: "Not Contacted" },
+            { name: "Bank Windhoek", category: "Banking & Finance", scope: "Namibia", phone: "+264 61 299 1200", email: "info@bankwindhoek.com.na", address: "Windhoek, Namibia", opportunity: "Silver Partner / Regional Support", status: "Not Contacted" },
+            { name: "Nedbank Namibia", category: "Banking & Finance", scope: "Namibia", phone: "+264 61 295 9111", email: "contact@nedbank.com.na", address: "Windhoek, Namibia", opportunity: "Silver Partner / Green SME", status: "Not Contacted" },
+            { name: "Agribank of Namibia", category: "Banking & Finance", scope: "Namibia", phone: "+264 61 207 4111", email: "info@agribank.com.na", address: "Windhoek, Namibia", opportunity: "Bronze Partner / Agro-SME Panel", status: "Not Contacted" },
+            { name: "Development Bank of Namibia (DBN)", category: "Banking & Finance", scope: "Namibia", phone: "+264 61 290 2200", email: "info@dbn.com.na", address: "Windhoek / Oshakati, Namibia", opportunity: "Gold Partner / Key Keynote", status: "Proposal Sent" },
+            { name: "Environmental Investment Fund (EIF)", category: "Banking & Finance", scope: "Namibia", phone: "+264 61 431 7700", email: "office@eif.org.na", address: "Windhoek, Namibia", opportunity: "Silver Partner / Eco-Enterprise", status: "Not Contacted" },
+            { name: "Capricorn Group", category: "Banking & Finance", scope: "Namibia", phone: "+264 61 299 0000", email: "groupsecretary@capricorn.com.na", address: "Windhoek, Namibia", opportunity: "Gold Partner / Corporate Sponsor", status: "Not Contacted" },
+            { name: "Letshego Holdings Namibia", category: "Banking & Finance", scope: "Namibia", phone: "+264 61 295 4800", email: "info@letshego.com.na", address: "Windhoek, Namibia", opportunity: "Silver Partner / Microfinance", status: "Not Contacted" },
+            { name: "Standard Bank Group", category: "Banking & Finance", scope: "SADC", phone: "+27 11 636 9111", email: "sbgcomms@standardbank.co.za", address: "Johannesburg, South Africa", opportunity: "SADC Regional Enterprise Grant", status: "Not Contacted" },
+            { name: "Absa Group Limited", category: "Banking & Finance", scope: "SADC", phone: "+27 11 350 4000", email: "groupcommunication@absa.africa", address: "Johannesburg, South Africa", opportunity: "SADC Regional Sponsorship", status: "Not Contacted" },
+            { name: "Nedbank Group SADC", category: "Banking & Finance", scope: "SADC", phone: "+27 11 294 4444", email: "nedbankgroup@nedbank.co.za", address: "Sandton, South Africa", opportunity: "SADC SME Development Partner", status: "Not Contacted" },
+            { name: "African Export-Import Bank (Afreximbank)", category: "Banking & Finance", scope: "SADC", phone: "+20 2 2456 4100", email: "info@afreximbank.com", address: "Cairo / Southern Africa Office", opportunity: "SADC Trade & Investment Partner", status: "Not Contacted" },
+            { name: "Development Bank of Southern Africa (DBSA)", category: "Banking & Finance", scope: "SADC", phone: "+27 11 313 3911", email: "dbsa@dbsa.org", address: "Midrand, South Africa", opportunity: "SADC Infrastructure & SME Funding", status: "Not Contacted" },
+            { name: "International Finance Corporation (IFC Southern Africa)", category: "Banking & Finance", scope: "SADC", phone: "+27 11 731 3000", email: "webmaster@ifc.org", address: "Johannesburg, South Africa", opportunity: "Institutional Funding Panelist", status: "Not Contacted" },
+
+            // --- VENTURE CAPITAL & ACCELERATORS (16-24) ---
+            { name: "Tony Elumelu Foundation", category: "Venture Capital", scope: "SADC", phone: "+234 1 277 4641", email: "info@tonyelumelufoundation.org", address: "Pan-African / SADC Desk", opportunity: "Entrepreneurship Grant Program Partner", status: "Not Contacted" },
+            { name: "Seedstars Africa Ventures", category: "Venture Capital", scope: "SADC", phone: "+41 22 552 0670", email: "africa@seedstars.com", address: "Regional / SADC Office", opportunity: "Startup Investment Partner", status: "Not Contacted" },
+            { name: "4Di Capital", category: "Venture Capital", scope: "SADC", phone: "+27 21 462 7300", email: "info@4dicapital.com", address: "Cape Town, South Africa", opportunity: "Venture Panelist", status: "Not Contacted" },
+            { name: "Savant Startup Accelerator", category: "Venture Capital", scope: "SADC", phone: "+27 11 028 3226", email: "info@savant.co.za", address: "Johannesburg, South Africa", opportunity: "Innovation Award Partner", status: "Not Contacted" },
+            { name: "LaunchLab Stellenbosch", category: "Venture Capital", scope: "SADC", phone: "+27 21 808 3496", email: "hello@launchlab.co.za", address: "Stellenbosch, South Africa", opportunity: "Incubator Partner", status: "Not Contacted" },
+            { name: "The Small Enterprise Foundation (SEF)", category: "Venture Capital", scope: "SADC", phone: "+27 15 307 5837", email: "sef@sef.co.za", address: "Tzaneen, South Africa", opportunity: "Micro-Enterprise Partner", status: "Not Contacted" },
+            { name: "Namibia Venture Capital Association", category: "Venture Capital", scope: "Namibia", phone: "+264 61 228 809", email: "info@nvca.org.na", address: "Windhoek, Namibia", opportunity: "Panelist & Investor Network", status: "Not Contacted" },
+            { name: "Startup Namibia", category: "Venture Capital", scope: "Namibia", phone: "+264 61 222 733", email: "contact@startupnamibia.org", address: "Windhoek, Namibia", opportunity: "Incubation & Exhibition Partner", status: "Contacted" },
+            { name: "GIZ Namibia (Promotion of Business)", category: "Venture Capital", scope: "Namibia", phone: "+264 61 222 447", email: "giz-namibia@giz.de", address: "Windhoek, Namibia", opportunity: "Institutional Sponsor", status: "Not Contacted" },
+
+            // --- MINING & INDUSTRIAL GIANTS (25-36) ---
+            { name: "Namdeb Diamond Corporation", category: "Mining & Industrial", scope: "Namibia", phone: "+264 61 204 3333", email: "communications@namdeb.com", address: "Windhoek, Namibia", opportunity: "Gold Partner / Local Procurement", status: "Not Contacted" },
+            { name: "Rössing Uranium Limited", category: "Mining & Industrial", scope: "Namibia", phone: "+264 64 520 9111", email: "rossing.communications@riotinto.com", address: "Arandis / Swakopmund, Namibia", opportunity: "Gold Partner / CSR Grant", status: "Not Contacted" },
+            { name: "Swakop Uranium (Husab Mine)", category: "Mining & Industrial", scope: "Namibia", phone: "+264 64 410 4000", email: "info@swakopuranium.com", address: "Swakopmund, Namibia", opportunity: "Gold Partner / Enterprise Dev", status: "Not Contacted" },
+            { name: "B2Gold Namibia", category: "Mining & Industrial", scope: "Namibia", phone: "+264 61 295 8600", email: "namibia@b2gold.com", address: "Windhoek, Namibia", opportunity: "Gold Partner / Community Fund", status: "Not Contacted" },
+            { name: "Debmarine Namibia", category: "Mining & Industrial", scope: "Namibia", phone: "+264 61 209 6111", email: "debmarine@debmarine.com", address: "Windhoek, Namibia", opportunity: "Silver Partner / Innovation Support", status: "Not Contacted" },
+            { name: "Ohorongo Cement", category: "Mining & Industrial", scope: "Namibia", phone: "+264 61 389 300", email: "info@ohorongo-cement.com", address: "Otavi / Windhoek, Namibia", opportunity: "Silver Partner / Industrial Stall", status: "Not Contacted" },
+            { name: "Anglo American (South Africa / SADC)", category: "Mining & Industrial", scope: "SADC", phone: "+27 11 638 9111", email: "general.enquiries@angloamerican.com", address: "Johannesburg, South Africa", opportunity: "SADC Zimele SME Fund Partnership", status: "Not Contacted" },
+            { name: "Rio Tinto Southern Africa", category: "Mining & Industrial", scope: "SADC", phone: "+27 11 214 6000", email: "enquiries@riotinto.com", address: "Johannesburg, South Africa", opportunity: "Regional Supplier Development", status: "Not Contacted" },
+            { name: "Glencore South Africa / SADC", category: "Mining & Industrial", scope: "SADC", phone: "+27 11 880 0222", email: "info@glencore.co.za", address: "Johannesburg, South Africa", opportunity: "Regional CSR Grant Sponsor", status: "Not Contacted" },
+            { name: "Exxaro Resources", category: "Mining & Industrial", scope: "SADC", phone: "+27 12 307 5000", email: "support@exxaro.com", address: "Pretoria, South Africa", opportunity: "Enterprise Development Partner", status: "Not Contacted" },
+            { name: "Sasol Limited", category: "Mining & Industrial", scope: "SADC", phone: "+27 11 441 3111", email: "sasol.contact@sasol.com", address: "Sandton, South Africa", opportunity: "SADC Regional Energy Sponsor", status: "Not Contacted" },
+            { name: "Impala Platinum (Implats SADC)", category: "Mining & Industrial", scope: "SADC", phone: "+27 11 731 9000", email: "investor@implats.co.za", address: "Johannesburg, South Africa", opportunity: "SADC Community Development Fund", status: "Not Contacted" },
+
+            // --- TECH & TELECOM (37-46) ---
+            { name: "MTC Namibia", category: "Tech & Telecom", scope: "Namibia", phone: "+264 61 280 2000", email: "feedback@mtc.com.na", address: "Windhoek, Namibia", opportunity: "Gold Partner / Digital Innovation", status: "Not Contacted" },
+            { name: "Telecom Namibia", category: "Tech & Telecom", scope: "Namibia", phone: "+264 61 201 9111", email: "corporate@telecom.na", address: "Windhoek, Namibia", opportunity: "Silver Partner / Connectivity", status: "Not Contacted" },
+            { name: "Paratus Namibia", category: "Tech & Telecom", scope: "Namibia", phone: "+264 61 253 388", email: "info@paratus.com.na", address: "Windhoek, Namibia", opportunity: "Silver Partner / Digital Infrastructure", status: "Not Contacted" },
+            { name: "Paratus Group (SADC)", category: "Tech & Telecom", scope: "SADC", phone: "+264 61 253 388", email: "legal@paratus.telecom", address: "Windhoek / SADC Regional", opportunity: "SADC Regional Connectivity Partner", status: "Not Contacted" },
+            { name: "Huawei Technologies Southern Africa", category: "Tech & Telecom", scope: "SADC", phone: "+27 11 517 9800", email: "consumer.za@huawei.com", address: "Johannesburg, South Africa", opportunity: "Digital Youth & Tech Sponsor", status: "Not Contacted" },
+            { name: "Liquid Intelligent Technologies SADC", category: "Tech & Telecom", scope: "SADC", phone: "+27 11 589 8000", email: "info@liquid.tech", address: "Johannesburg, South Africa", opportunity: "Cloud & SME Tech Partner", status: "Not Contacted" },
+            { name: "Microsoft South Africa & SADC Initiatives", category: "Tech & Telecom", scope: "SADC", phone: "+27 11 257 0000", email: "za-info@microsoft.com", address: "Johannesburg, South Africa", opportunity: "Startup Founders Hub Partner", status: "Not Contacted" },
+            { name: "Amazon Web Services (AWS) Africa", category: "Tech & Telecom", scope: "SADC", phone: "+27 21 401 2000", email: "aws-africa-inquiries@amazon.com", address: "Cape Town, South Africa", opportunity: "Cloud Credits for Startups", status: "Not Contacted" },
+            { name: "Google for Startups Africa", category: "Tech & Telecom", scope: "SADC", phone: "+27 11 997 4000", email: "startup-africa@google.com", address: "Johannesburg, South Africa", opportunity: "Masterclass & Grant Partner", status: "Not Contacted" },
+            { name: "Africa Data Centres", category: "Tech & Telecom", scope: "SADC", phone: "+27 11 589 8200", email: "sales@africadatacentres.com", address: "Johannesburg, South Africa", opportunity: "Digital Infrastructure Sponsor", status: "Not Contacted" },
+
+            // --- ENERGY & RETAIL (47-56) ---
+            { name: "Namibia Breweries Limited (NBL / O&L)", category: "Energy & Retail", scope: "Namibia", phone: "+264 61 320 4999", email: "info@nbl.com.na", address: "Windhoek, Namibia", opportunity: "Gold Partner / Supplier Development", status: "Not Contacted" },
+            { name: "Pick n Pay Namibia (O&L Group)", category: "Energy & Retail", scope: "Namibia", phone: "+264 61 207 5000", email: "pnp@ol.com.na", address: "Windhoek, Namibia", opportunity: "Retail Shelf-Space Initiative Partner", status: "Not Contacted" },
+            { name: "Shoprite Holdings Namibia", category: "Energy & Retail", scope: "Namibia", phone: "+264 61 294 3000", email: "namibia@shoprite.co.za", address: "Windhoek, Namibia", opportunity: "Corporate Stall / Supplier Access", status: "Not Contacted" },
+            { name: "TotalEnergies Namibia", category: "Energy & Retail", scope: "Namibia", phone: "+264 61 204 8000", email: "ms.nam-com@totalenergies.com", address: "Windhoek, Namibia", opportunity: "Silver Partner / Energy Panel", status: "Not Contacted" },
+            { name: "Puma Energy Namibia", category: "Energy & Retail", scope: "Namibia", phone: "+264 61 270 7000", email: "info.namibia@pumaenergy.com", address: "Windhoek, Namibia", opportunity: "Exhibition Stall & Sponsor", status: "Not Contacted" },
+            { name: "Shell Namibia Upstream B.V.", category: "Energy & Retail", scope: "Namibia", phone: "+264 61 270 4000", email: "shellnamibia@shell.com", address: "Windhoek, Namibia", opportunity: "Gold Partner / Enterprise Dev", status: "Not Contacted" },
+            { name: "Engen Namibia", category: "Energy & Retail", scope: "Namibia", phone: "+264 61 291 9111", email: "engen.namibia@engenoil.com", address: "Windhoek, Namibia", opportunity: "Silver Partner / Fuel Sponsor", status: "Not Contacted" },
+            { name: "Shoprite Checkers SADC Group", category: "Energy & Retail", scope: "SADC", phone: "+27 21 980 4000", email: "media@shoprite.co.za", address: "Brackenfell, South Africa", opportunity: "SADC Regional Retail Partner", status: "Not Contacted" },
+            { name: "Massmart Holdings (Walmart SADC)", category: "Energy & Retail", scope: "SADC", phone: "+27 11 517 0000", email: "media@massmart.co.za", address: "Johannesburg, South Africa", opportunity: "SADC Supplier Development", status: "Not Contacted" },
+            { name: "Bidvest Namibia", category: "Energy & Retail", scope: "Namibia", phone: "+264 61 427 800", email: "info@bidvest.com.na", address: "Windhoek, Namibia", opportunity: "Silver Partner / Logistics Sponsor", status: "Not Contacted" },
+
+            // --- REGULATORY & GOVERNMENT (57-60) ---
+            { name: "Namibia Investment Board (NIPDB)", category: "Regulatory & Government", scope: "Namibia", phone: "+264 61 962 200", email: "info@nipdb.com", address: "Windhoek, Namibia", opportunity: "Institutional Partner / Panelist", status: "Confirmed" },
+            { name: "Business & IP Authority (BIPA)", category: "Regulatory & Government", scope: "Namibia", phone: "+264 61 283 5100", email: "info@bipa.na", address: "Windhoek, Namibia", opportunity: "Compliance Workshop Partner", status: "Contacted" },
+            { name: "Namibia Revenue Agency (NAMRA)", category: "Regulatory & Government", scope: "Namibia", phone: "+264 61 209 9111", email: "info@namra.org.na", address: "Windhoek, Namibia", opportunity: "Tax Compliance Panelist", status: "Not Contacted" },
+            { name: "SADC Business Council", category: "Regulatory & Government", scope: "SADC", phone: "+267 395 1863", email: "info@sadcbt.org", address: "Gaborone, Botswana", opportunity: "SADC Regional Trade Integration", status: "Not Contacted" },
+
+            // --- MEDIA PARTNERS (61-65) ---
+            { name: "The Namibian Newspaper", category: "Media", scope: "Namibia", phone: "+264 61 208 8000", email: "newsdesk@namibian.com.na", address: "Windhoek, Namibia", opportunity: "Media Partner (Confirmed)", status: "Confirmed" },
+            { name: "New Era Publication Corporation", category: "Media", scope: "Namibia", phone: "+264 61 291 5000", email: "news@newera.com.na", address: "Windhoek, Namibia", opportunity: "Media Partner (Confirmed)", status: "Confirmed" },
+            { name: "Namibia Broadcasting Corporation (NBC)", category: "Media", scope: "Namibia", phone: "+264 65 220 381", email: "info@nbc.na", address: "Oshakati / Windhoek, Namibia", opportunity: "Broadcast & Talkshow Partner", status: "Contacted" },
+            { name: "Namibia Media Holdings (Sun / Republikein)", category: "Media", scope: "Namibia", phone: "+264 61 297 2000", email: "sun@synergi.com.na", address: "Windhoek, Namibia", opportunity: "Print & Digital Press Coverage", status: "Not Contacted" },
+            { name: "CNBC Africa / Forbes Africa", category: "Media", scope: "SADC", phone: "+27 11 384 1300", email: "feedback@cnbcafrica.com", address: "Johannesburg, South Africa", opportunity: "SADC Regional Business Coverage", status: "Not Contacted" }
+        ];
+
+        let currentCategory = 'All';
+        let currentScope = 'All';
+
+        function renderTable(dataToRender) {
+            const tbody = document.getElementById('tableBody');
+            const noResults = document.getElementById('noResults');
+            tbody.innerHTML = '';
+
+            if (dataToRender.length === 0) {
+                noResults.classList.remove('hidden');
+                return;
+            } else {
+                noResults.classList.add('hidden');
+            }
+
+            dataToRender.forEach((item, index) => {
+                let statusBadge = '';
+                if (item.status === 'Confirmed') statusBadge = 'bg-emerald-100 text-emerald-800 border-emerald-200';
+                else if (item.status === 'Proposal Sent') statusBadge = 'bg-amber-100 text-amber-800 border-amber-200';
+                else if (item.status === 'Contacted') statusBadge = 'bg-blue-100 text-blue-800 border-blue-200';
+                else statusBadge = 'bg-slate-100 text-slate-700 border-slate-200';
+
+                let scopeBadge = item.scope === 'SADC' ? 'bg-purple-100 text-purple-700' : 'bg-slate-100 text-slate-600';
+
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50/80 transition border-b border-slate-100";
+                tr.innerHTML = `
+                    <td class="py-3 px-4 font-medium text-slate-900">
+                        ${item.name}
+                        <div class="text-xs text-slate-400 font-normal">${item.address}</div>
+                    </td>
+                    <td class="py-3 px-4">
+                        <span class="text-xs font-semibold px-2 py-0.5 bg-slate-100 text-slate-600 rounded-md">${item.category}</span>
+                    </td>
+                    <td class="py-3 px-4">
+                        <span class="text-xs font-bold px-2 py-0.5 rounded ${scopeBadge}">${item.scope}</span>
+                    </td>
+                    <td class="py-3 px-4 text-xs text-slate-600">
+                        <div><i class="fa-solid fa-phone w-4 text-slate-400"></i> ${item.phone}</div>
+                        <div class="mt-0.5"><i class="fa-solid fa-envelope w-4 text-slate-400"></i> <a href="mailto:${item.email}" class="text-blue-600 hover:underline">${item.email}</a></div>
+                    </td>
+                    <td class="py-3 px-4 font-medium text-slate-700 text-xs">
+                        ${item.opportunity}
+                    </td>
+                    <td class="py-3 px-4">
+                        <select onchange="updateStatus(${index}, this.value)" class="text-xs px-2 py-1 rounded-md border font-semibold ${statusBadge} cursor-pointer focus:outline-none">
+                            <option value="Not Contacted" ${item.status === 'Not Contacted' ? 'selected' : ''}>Not Contacted</option>
+                            <option value="Contacted" ${item.status === 'Contacted' ? 'selected' : ''}>Contacted</option>
+                            <option value="Proposal Sent" ${item.status === 'Proposal Sent' ? 'selected' : ''}>Proposal Sent</option>
+                            <option value="Confirmed" ${item.status === 'Confirmed' ? 'selected' : ''}>Confirmed Partner</option>
+                        </select>
+                    </td>
+                    <td class="py-3 px-4 text-center">
+                        <button onclick="viewDetails(${index})" class="text-slate-400 hover:text-slate-700 p-1.5 rounded-lg hover:bg-slate-200 transition cursor-pointer" title="View Full Details">
+                            <i class="fa-solid fa-eye"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            updateStats();
+        }
+
+        function updateStats() {
+            document.getElementById('statTotal').innerText = prospects.length;
+            document.getElementById('statFinancial').innerText = prospects.filter(p => p.category === 'Banking & Finance').length;
+            document.getElementById('statMining').innerText = prospects.filter(p => p.category === 'Mining & Industrial').length;
+            document.getElementById('statTech').innerText = prospects.filter(p => p.category === 'Tech & Telecom').length;
+            document.getElementById('statSADC').innerText = prospects.filter(p => p.scope === 'SADC').length;
+        }
+
+        function filterCategory(cat) {
+            currentCategory = cat;
+            document.querySelectorAll('.cat-btn').forEach(btn => {
+                if (btn.innerText.includes(cat) || (cat === 'All' && btn.innerText === 'All')) {
+                    btn.className = "cat-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-900 text-white transition cursor-pointer";
+                } else {
+                    btn.className = "cat-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200 transition cursor-pointer";
+                }
+            });
+            filterTable();
+        }
+
+        function filterScope(scope) {
+            currentScope = scope;
+            document.getElementById('scopeAll').className = scope === 'All' ? "scope-btn font-bold text-slate-900 underline cursor-pointer" : "scope-btn hover:text-slate-900 cursor-pointer";
+            document.getElementById('scopeNam').className = scope === 'Namibia' ? "scope-btn font-bold text-slate-900 underline cursor-pointer" : "scope-btn hover:text-slate-900 cursor-pointer";
+            document.getElementById('scopeSadc').className = scope === 'SADC' ? "scope-btn font-bold text-slate-900 underline cursor-pointer" : "scope-btn hover:text-slate-900 cursor-pointer";
+            filterTable();
+        }
+
+        function filterTable() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const filtered = prospects.filter(p => {
+                const matchesCat = currentCategory === 'All' || p.category === currentCategory;
+                const matchesScope = currentScope === 'All' || p.scope === currentScope;
+                const matchesQuery = p.name.toLowerCase().includes(query) || 
+                                     p.email.toLowerCase().includes(query) || 
+                                     p.phone.toLowerCase().includes(query) ||
+                                     p.opportunity.toLowerCase().includes(query) ||
+                                     p.address.toLowerCase().includes(query);
+                return matchesCat && matchesScope && matchesQuery;
+            });
+            renderTable(filtered);
+        }
+
+        function updateStatus(index, newStatus) {
+            prospects[index].status = newStatus;
+            updateStats();
+        }
+
+        function viewDetails(index) {
+            const p = prospects[index];
+            document.getElementById('modalTitle').innerText = p.name;
+            document.getElementById('modalContent').innerHTML = `
+                <p><strong>Category:</strong> ${p.category}</p>
+                <p><strong>Scope / Region:</strong> ${p.scope}</p>
+                <p><strong>Headquarters / Address:</strong> ${p.address}</p>
+                <p><strong>Phone:</strong> ${p.phone}</p>
+                <p><strong>Email:</strong> <a href="mailto:${p.email}" class="text-blue-600 underline">${p.email}</a></p>
+                <p><strong>Target Package:</strong> ${p.opportunity}</p>
+                <p><strong>Current Status:</strong> <span class="px-2 py-0.5 rounded font-semibold bg-slate-100 text-slate-800">${p.status}</span></p>
+            `;
+            document.getElementById('detailModal').classList.remove('hidden');
+            document.getElementById('detailModal').classList.add('flex');
+        }
+
+        function closeModal() {
+            document.getElementById('detailModal').classList.remove('flex');
+            document.getElementById('detailModal').classList.add('hidden');
+        }
+
+        function exportToCSV() {
+            let csv = 'Company,Category,Scope,Phone,Email,Address,Target Opportunity,Status\n';
+            prospects.forEach(p => {
+                csv += `"${p.name}","${p.category}","${p.scope}","${p.phone}","${p.email}","${p.address}","${p.opportunity}","${p.status}"\n`;
+            });
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'OEIF_2026_Expanded_Sponsorship_Directory_65.csv';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        // Initialize table on load
+        window.onload = () => {
+            renderTable(prospects);
+        };
+    </script>
+</body>
+</html>
